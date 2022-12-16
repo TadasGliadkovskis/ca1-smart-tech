@@ -5,6 +5,10 @@
 -
 -
 
+## Dependencies while developing
+If new dependencies have been added make sure to create a requirments.txt file using
+```pip freeze requirements.txt```
+
 ## How to use
 To run this application you'll need [Python >= ](https://www.python.org/downloads/) and [pip](https://pypi.org/) (which comes pre-installed with python)
 From your command line
