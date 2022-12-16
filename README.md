@@ -1,5 +1,5 @@
 # Smart Technologies CA1 Image Classification
-## Richard Collins (D002), Tadas Gliadkovskis (D00229061)
+## Richard Collins (D00230925), Tadas Gliadkovskis (D00229061)
 
 ## Key Features
 -
