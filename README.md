@@ -1,6 +1,10 @@
 # Smart Technologies CA1 Image Classification
 ## Richard Collins (D00230925), Tadas Gliadkovskis (D00229061)
 
+## How to read annotations in the .txt
+TR = Top Right Coordinate
+BR = Bottom Right Coordinate
+FileName, Class, TR X, TR Y, BR X, BR Y
 ## Key Features
 -
 -
