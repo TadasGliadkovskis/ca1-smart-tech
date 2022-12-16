@@ -1,6 +1,10 @@
 # Smart Technologies CA1 Image Classification
 ## Richard Collins (D00230925), Tadas Gliadkovskis (D00229061)
 
+## How to read annotations in the .txt
+TR = Top Right Coordinate
+BR = Bottom Right Coordinate
+FileName, Class, TR X, TR Y, BR X, BR Y
 ## Key Features
 -
 -
@@ -10,7 +14,7 @@ If new dependencies have been added make sure to create a requirments.txt file u
 ```pip freeze requirements.txt```
 
 ## How to use
-To run this application you'll need [Python >= ](https://www.python.org/downloads/) and [pip](https://pypi.org/) (which comes pre-installed with python)
+To run this application you'll need [Python >= 3.10.7](https://www.python.org/downloads/) and [pip](https://pypi.org/) (which comes pre-installed with python)
 From your command line
 
 ```
