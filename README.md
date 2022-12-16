@@ -1,3 +1,15 @@
+# Smart Technologies CA1 Image Classification
+## Richard Collins (D002), Tadas Gliadkovskis (D00229061)
+
+## Key Features
+-
+-
+
+## How to use
+To run this application you'll need [Python >= ](https://www.python.org/downloads/) and [pip](https://pypi.org/) (which comes pre-installed with python)
+From your command line
+
+```
 # Clone This Repository
 https://github.com/TadasGliadkovskis/ca1-smart-tech.git
 
@@ -18,3 +30,4 @@ py main.py
 
 # Deactivate your virtual env when finished
 env\Scripts\deactivate
+```
