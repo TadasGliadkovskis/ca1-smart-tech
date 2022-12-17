@@ -3,8 +3,13 @@ import cv2
 from os import listdir
 import env
 
+def read_ids():
+      file_dir = env.IMAGES_DIR+"wnids.txt"
+      with open(file_dir) as f:
+            ids = f.readlines()
+      return list(map(str.strip, ids))
+
 def read_files(folder):
-# get the path/directory
       folder_dir = env.IMAGES_DIR+folder+"/images"
       images =[]
       for file in os.listdir(folder_dir):
@@ -28,6 +33,5 @@ def preprocess_image(image):
       return image
 
 if __name__ == "__main__":
-      test_images = read_files("test")
-      validation_images = read_files("val")
-      print(len(validation_images))
+      ids = read_ids()
+      print(ids) 
