@@ -2,6 +2,10 @@ import os
 import cv2
 from os import listdir
 import env
+import numpy as np
+import matplotlib.pyplot as plt
+from time import sleep
+
 
 
 def read_ids():
@@ -15,7 +19,7 @@ def read_words_txt():
 	file_dir = env.IMAGES_DIR+"words.txt"
 	with open(file_dir) as f:
 		lines = f.readlines()
-		
+
 	new_list = []
 	ids = read_ids()
 	for line in lines:
@@ -24,12 +28,14 @@ def read_words_txt():
 			new_list.append(line)
 	return(new_list)
 
-def make_new_words_txt():
-	file_dir = env.IMAGES_DIR+"new_words.txt"
+
+def filter_words_txt():
+	file_dir = env.IMAGES_DIR+"filtered_words.txt" #Output to this file
 	dictionary_list = read_words_txt()
-	with open(file_dir,'w') as f:
+	with open(file_dir, 'w') as f:
 		for line in dictionary_list:
 			f.write(line)
+
 
 def read_files(folder):
 	folder_dir = env.IMAGES_DIR+folder+"/images"
@@ -41,10 +47,12 @@ def read_files(folder):
 	return images
 
 
-def read_train_files(ids):
+def read_train_files(ids,limit):
 	train = []
 	for id in ids:
 		train.append(read_files("/train/"+id))
+		if limit:
+			break
 	return train
 
 
@@ -52,10 +60,11 @@ def grey_scale(image):
 	image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 	return image
 
+
 def gaus_blur(image):
 	image = cv2.GaussianBlur(image, (5, 5), 0)
 	return image
-	
+
 
 def equalise(image):
 	image = cv2.equalizeHist(image)
@@ -70,5 +79,21 @@ def preprocess_image(image):
 	return image
 
 
+def display_image(img):
+	plt.imshow(img, cmap=plt.get_cmap('gray'))
+	plt.show()
+
+
+def get_shape(image_collection):
+	print(np.shape(image_collection))
+	return np.shape(image_collection)
+
+
 if __name__ == "__main__":
-	make_new_words_txt()
+	
+	X_train = read_train_files(read_ids(),True)
+	img = X_train[0][0]
+	get_shape(X_train)
+	img = preprocess_image(img)
+	display_image(img)
+	
