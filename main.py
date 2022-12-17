@@ -18,6 +18,12 @@ def read_files(folder):
                   images.append(image)
       return images
 
+def read_train_files(ids):
+      train=[]
+      for id in ids:
+            train.append(read_files("/train/"+id))
+      return train
+
 def grey_scale(image):
       image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
       return image
@@ -34,4 +40,5 @@ def preprocess_image(image):
 
 if __name__ == "__main__":
       ids = read_ids()
-      print(ids) 
+      train = read_train_files(ids)
+      print(len(train)) 
