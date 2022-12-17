@@ -5,7 +5,10 @@ import env
 import numpy as np
 import matplotlib.pyplot as plt
 from time import sleep
-
+import torch
+import torchvision
+from torchvision.io import read_image
+from torchvision.utils import draw_bounding_boxes
 
 
 def read_ids():
@@ -30,7 +33,7 @@ def read_words_txt():
 
 
 def filter_words_txt():
-	file_dir = env.IMAGES_DIR+"filtered_words.txt" #Output to this file
+	file_dir = env.IMAGES_DIR+"filtered_words.txt"  # Output to this file
 	dictionary_list = read_words_txt()
 	with open(file_dir, 'w') as f:
 		for line in dictionary_list:
@@ -47,7 +50,7 @@ def read_files(folder):
 	return images
 
 
-def read_train_files(ids,limit):
+def read_train_files(ids, limit):
 	train = []
 	for id in ids:
 		train.append(read_files("/train/"+id))
@@ -78,8 +81,14 @@ def preprocess_image(image):
 	image = image/255
 	return image
 
-
-def display_image(img):
+url = "C:/smartTech/ca1-smart-tech/tiny-imagenet-200/train/n02058221/images/n02058221_0.JPEG"
+def display_image(img, top_left_coords, bottom_right_coords):
+	img = read_image(url)
+	box = int(top_left_coords[0]), int(top_left_coords[1]), int(bottom_right_coords[0]), int(bottom_right_coords[1])
+	box = torch.tensor(box)
+	box = box.unsqueeze(0)
+	img = draw_bounding_boxes(img, box, width=5,colors="green")
+	img = torchvision.transforms.ToPILImage()(img)
 	plt.imshow(img, cmap=plt.get_cmap('gray'))
 	plt.show()
 
@@ -94,7 +103,7 @@ def extract_bounding_box(id):
 	boxes_dir = env.IMAGES_DIR+"train/"+id+"/"+txt_file
 	with open(boxes_dir) as f:
 		lines = f.readlines()
-	#array of 500 lines going to 499
+	# array of 500 lines going to 499
 	split_list=[]
 	top_left_coords = []
 	bottom_right_coords = []
@@ -111,6 +120,11 @@ def extract_bounding_box(id):
 	
 if __name__ == "__main__":
 	ids = read_ids()
+	
+	
+	
+	
+	# Get bounding box co ordinates
 	count = 0
 	top_left = []
 	bottom_right = []
@@ -121,7 +135,14 @@ if __name__ == "__main__":
 			break
 	print("top left: ",top_left)
 	print("bottom right ",bottom_right)
-	#Get train data and display the first image from the first class
+	X_train = read_train_files(read_ids(),True)
+	img = X_train[0][0]
+	img = preprocess_image(img)
+	display_image(img, top_left[0],bottom_right[0])
+
+
+	
+	# Get train data and display the first image from the first class
 	# X_train = read_train_files(read_ids(),True)
 	# X_test = read_files("test")
 	# X_val = read_files("val")
