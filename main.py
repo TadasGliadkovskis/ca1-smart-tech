@@ -38,10 +38,10 @@ def filter_words_txt():
 
 
 def read_files(folder):
-	folder_dir = env.IMAGES_DIR+folder+"/images"
+	images_dir = env.IMAGES_DIR+folder+"/images"
 	images = []
-	for file in os.listdir(folder_dir):
-		image = cv2.imread(os.path.join(folder_dir, file))
+	for file in os.listdir(images_dir):
+		image = cv2.imread(os.path.join(images_dir, file))
 		if image is not None:
 			images.append(image)
 	return images
@@ -83,17 +83,46 @@ def display_image(img):
 	plt.imshow(img, cmap=plt.get_cmap('gray'))
 	plt.show()
 
-
+# Will allow us to see how many classes (200), how many images in each class (500), (X, Y) resolution (64, 64), RGB status (3)
 def get_shape(image_collection):
 	print(np.shape(image_collection))
 	return np.shape(image_collection)
 
 
-if __name__ == "__main__":
+def extract_bounding_box(id):
+	txt_file = id+"_boxes.txt"
+	boxes_dir = env.IMAGES_DIR+"train/"+id+"/"+txt_file
+	with open(boxes_dir) as f:
+		lines = f.readlines()
+	#array of 500 lines going to 499
+	split_list=[]
+	top_left_coords = []
+	bottom_right_coords = []
+	count = 0
+	for line in lines:
+		count +=1
+		if count == 5:
+			break
+		split_list = line.split('\t')
+		top_left_coords += [[split_list[1],split_list[2]]]
+		bottom_right_coords +=[[split_list[3],split_list[4].strip()]]
+	return top_left_coords, bottom_right_coords
+
 	
-	X_train = read_train_files(read_ids(),True)
-	img = X_train[0][0]
-	get_shape(X_train)
-	img = preprocess_image(img)
-	display_image(img)
+if __name__ == "__main__":
+	ids = read_ids()
+	count = 0
+	top_left = []
+	bottom_right = []
+	for id in ids:
+		top_left, bottom_right = extract_bounding_box(id)
+		count += 1
+		if count == 3:
+			break
+	print("top left: ",top_left)
+	print("bottom right ",bottom_right)
+	#Get train data and display the first image from the first class
+	# X_train = read_train_files(read_ids(),True)
+	# img = X_train[0][0]
+	# print(len(X_train))
 	
