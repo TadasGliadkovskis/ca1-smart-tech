@@ -123,6 +123,12 @@ if __name__ == "__main__":
 	print("bottom right ",bottom_right)
 	#Get train data and display the first image from the first class
 	# X_train = read_train_files(read_ids(),True)
+	# X_test = read_files("test")
+	# X_val = read_files("val")
+
+	# X_train = np.array(list(map(preprocess_image, X_train)))
+	# X_test = np.array(list(map(preprocess_image, X_test)))
+	# X_val = np.array(list(map(preprocess_image, X_val)))
 	# img = X_train[0][0]
 	# print(len(X_train))
 	
