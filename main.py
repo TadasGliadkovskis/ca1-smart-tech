@@ -52,6 +52,10 @@ def grey_scale(image):
 	image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 	return image
 
+def gaus_blur(image):
+	image = cv2.GaussianBlur(image, (5, 5), 0)
+	return image
+	
 
 def equalise(image):
 	image = cv2.equalizeHist(image)
@@ -60,6 +64,7 @@ def equalise(image):
 
 def preprocess_image(image):
 	image = grey_scale(image)
+	image = gaus_blur(image)
 	image = equalise(image)
 	image = image/255
 	return image
