@@ -5,9 +5,7 @@ import env
 import numpy as np
 import matplotlib.pyplot as plt
 from time import sleep
-import torch
-import torchvision
-from torchvision.io import read_image
+from natsort import natsorted
 
 
 
@@ -43,7 +41,9 @@ def filter_words_txt():
 def read_files(folder):
 	images_dir = env.IMAGES_DIR+folder+"/images"
 	images = []
-	for file in os.listdir(images_dir):
+	files = os.listdir(images_dir)
+	sorted_files = natsorted(files)
+	for file in sorted_files:
 		image = cv2.imread(os.path.join(images_dir, file))
 		if image is not None:
 			images.append(image)
@@ -82,7 +82,6 @@ def preprocess_image(image):
 	return image
 
 	
-url = env.IMAGES_DIR+"train/n04540053/images/n04540053_0.JPEG"
 def display_image(img, top_left_coords, bottom_right_coords):
 	img = preprocess_image(img)
 	img = img * 255
@@ -125,11 +124,11 @@ if __name__ == "__main__":
 	bottom_right = []
 	for id in ids:
 		top_left, bottom_right = extract_bounding_box(id)
+		break
 
-	print("top left: ",top_left)
-	print("bottom right ",bottom_right)
 	X_train = read_train_files(read_ids(),True)
 	counter = 0
+	#TODO Can make this into a method and then use it in the loop above
 	for images in X_train:
 		for image in images:
 			display_image(image, top_left[counter], bottom_right[counter])			
