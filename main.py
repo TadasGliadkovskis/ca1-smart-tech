@@ -8,7 +8,7 @@ from time import sleep
 import torch
 import torchvision
 from torchvision.io import read_image
-from torchvision.utils import draw_bounding_boxes
+
 
 
 def read_ids():
@@ -81,16 +81,17 @@ def preprocess_image(image):
 	image = image/255
 	return image
 
-url = "C:/smartTech/ca1-smart-tech/tiny-imagenet-200/train/n02058221/images/n02058221_0.JPEG"
+url = env.IMAGES_DIR+"train/n02058221/images/n02058221_0.JPEG"
 def display_image(img, top_left_coords, bottom_right_coords):
-	img = read_image(url)
-	box = int(top_left_coords[0]), int(top_left_coords[1]), int(bottom_right_coords[0]), int(bottom_right_coords[1])
-	box = torch.tensor(box)
-	box = box.unsqueeze(0)
-	img = draw_bounding_boxes(img, box, width=5,colors="green")
-	img = torchvision.transforms.ToPILImage()(img)
-	plt.imshow(img, cmap=plt.get_cmap('gray'))
+	img = cv2.imread(url)
+	img = preprocess_image(img)
+	img = img * 255
+	img = img.astype(np.uint8)
+	img_rect = cv2.rectangle(img, (int(top_left_coords[0]),int(top_left_coords[1])), (int(bottom_right_coords[0]),int(bottom_right_coords[1])), (255,0,0), 0)
+	plt.imshow(img_rect, cmap='gray')
 	plt.show()
+
+
 
 # Will allow us to see how many classes (200), how many images in each class (500), (X, Y) resolution (64, 64), RGB status (3)
 def get_shape(image_collection):
