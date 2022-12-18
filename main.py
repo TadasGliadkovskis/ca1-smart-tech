@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from time import sleep
 from natsort import natsorted
 import tensorflow.keras
+import sklearn
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.optimizers import Adam
@@ -16,6 +17,8 @@ from keras.layers import Flatten
 from keras.layers import Dropout
 from keras.models import Model
 from keras.utils.np_utils import to_categorical
+from sklearn.preprocessing import LabelEncoder
+import pandas
 
 def read_ids(id_file_name):
 	file_dir = env.IMAGES_DIR+id_file_name
@@ -148,43 +151,47 @@ def modified_model():
 	model.add(Dense(500, activation='relu'))
 	model.add(Dropout(0.5))
 	model.add(Dense(num_classes, activation='softmax'))
-	model.compile(Adam(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
+	model.compile(Adam(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 	return model
 
 
 if __name__ == "__main__":
 	
 	y_train = read_labels()
-	y_train = np.asarray(y_train)
+	y_train = np.array(y_train)
+	# print(y_train)
 	
-	X_train = read_train_files(read_ids("filtered_words.txt"),False)
+	# label_encoder = LabelEncoder()
+	# y_train = label_encoder.fit_transform(y_train)
+	# y_train = to_categorical(y_train)
 
+	X_train = read_train_files(read_ids("filtered_words.txt"),False)
 	X_test = read_files("test")
 	X_val = read_files("val")
 
-	print(get_shape(X_train))
-	print(get_shape(X_val))
-	print(get_shape(X_test))
+	X_train= X_train.reshape(X_train.shape[0], 64, 64, 1)
+
+
+	# X_train = np.array(list(map(preprocess_image, X_train)))
+	# X_test = np.array(list(map(preprocess_image, X_test)))
+	# X_val = np.array(list(map(preprocess_image, X_val)))
 
 	assert(get_shape(X_train)[0] == get_shape(y_train)[0])
 	model = modified_model()
 	#print(model.summary())
-	list = y_train[0].split(',')
-	print("LIST: ",list)
-	ids = read_ids("filtered_words.txt")
-	ids = np.asarray(ids)
-	#ids = to_categorical(ids)
-	get_shape(y_train)
-	y_train.shape
-	#y_train = to_categorical(list)
-	history = model.fit(X_train, ids, validation_split=0.1, epochs=50, batch_size=200, verbose=1, shuffle=1)
-	plt.plot(history.history['loss'])
-	plt.plot(history.history['val_loss'])
-	plt.legend(['loss', 'val_loss'])
-	plt.title('Loss')
-	plt.xlabel('epochs')
-	plt.show()
 
+	y_train= pandas.get_dummies(y_train)
+
+	y_train = to_categorical(y_train, 200)
+
+	print(y_train)	
+	# history = model.fit(X_train, y_train, validation_split=0.05, epochs=5, batch_size=200, verbose=1, shuffle=1)
+	# plt.plot(history.history['loss'])
+	# plt.plot(history.history['val_loss'])
+	# plt.legend(['loss', 'val_loss'])
+	# plt.title('Loss')
+	# plt.xlabel('epochs')
+	# plt.show()
 
 	# Get bounding box co ordinates
 	# count = 0
@@ -209,9 +216,7 @@ if __name__ == "__main__":
 	# X_train = read_train_files(read_ids(),True)
 
 
-	# X_train = np.array(list(map(preprocess_image, X_train)))
-	# X_test = np.array(list(map(preprocess_image, X_test)))
-	# X_val = np.array(list(map(preprocess_image, X_val)))
+
 	# img = X_train[0][0]
 	# print(len(X_train))
 	
