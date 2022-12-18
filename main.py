@@ -81,9 +81,9 @@ def preprocess_image(image):
 	image = image/255
 	return image
 
-url = env.IMAGES_DIR+"train/n02058221/images/n02058221_0.JPEG"
+	
+url = env.IMAGES_DIR+"train/n04540053/images/n04540053_0.JPEG"
 def display_image(img, top_left_coords, bottom_right_coords):
-	img = cv2.imread(url)
 	img = preprocess_image(img)
 	img = img * 255
 	img = img.astype(np.uint8)
@@ -108,11 +108,7 @@ def extract_bounding_box(id):
 	split_list=[]
 	top_left_coords = []
 	bottom_right_coords = []
-	count = 0
 	for line in lines:
-		count +=1
-		if count == 5:
-			break
 		split_list = line.split('\t')
 		top_left_coords += [[split_list[1],split_list[2]]]
 		bottom_right_coords +=[[split_list[3],split_list[4].strip()]]
@@ -123,25 +119,21 @@ if __name__ == "__main__":
 	ids = read_ids()
 	
 	
-	
-	
 	# Get bounding box co ordinates
 	count = 0
 	top_left = []
 	bottom_right = []
 	for id in ids:
 		top_left, bottom_right = extract_bounding_box(id)
-		count += 1
-		if count == 3:
-			break
+
 	print("top left: ",top_left)
 	print("bottom right ",bottom_right)
 	X_train = read_train_files(read_ids(),True)
-	img = X_train[0][0]
-	img = preprocess_image(img)
-	display_image(img, top_left[0],bottom_right[0])
-
-
+	counter = 0
+	for images in X_train:
+		for image in images:
+			display_image(image, top_left[counter], bottom_right[counter])			
+			counter += 1
 	
 	# Get train data and display the first image from the first class
 	# X_train = read_train_files(read_ids(),True)
