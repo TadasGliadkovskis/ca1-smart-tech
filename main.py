@@ -9,11 +9,15 @@ from natsort import natsorted
 
 
 
-def read_ids():
-	file_dir = env.IMAGES_DIR+"wnids.txt"
+def read_ids(id_file_name):
+	file_dir = env.IMAGES_DIR+id_file_name
 	with open(file_dir) as f:
-		ids = f.readlines()
-	return list(map(str.strip, ids))
+		lines = f.readlines()
+	ids = []
+	for line in lines:
+		id = line.split('\t')[0]
+		ids.append(id.strip())
+	return ids
 
 
 def read_words_txt():
@@ -22,7 +26,7 @@ def read_words_txt():
 		lines = f.readlines()
 
 	new_list = []
-	ids = read_ids()
+	ids = read_ids("wnids.txt")
 	for line in lines:
 		split_id = line.split('\t')[0]
 		if split_id in ids:
@@ -116,19 +120,18 @@ def extract_bounding_box(id):
 
 	
 if __name__ == "__main__":
-	ids = read_ids()
-	
-	
+	filter_words_txt()
+	ids = read_ids("filtered_words.txt")
 	# Get bounding box co ordinates
-	count = 0
-	top_left = []
-	bounding_box = {}
-	#TODO this only retrieves the bounding box for the last class so when its used with display image
-	for id in ids:
-		bounding_box[id] = extract_bounding_box(id)
+	# count = 0
+	# top_left = []
+	# bounding_box = {}
+	# #TODO this only retrieves the bounding box for the last class so when its used with display image
+	# for id in ids:
+	# 	bounding_box[id] = extract_bounding_box(id)
 		
-	print(bounding_box['n02124075'][0][1], bounding_box['n02124075'][1][1])
-	print(bounding_box['n07749582'][0][1], bounding_box['n07749582'][1][1])
+	# print(bounding_box['n02124075'][0][1], bounding_box['n02124075'][1][1])
+	# print(bounding_box['n07749582'][0][1], bounding_box['n07749582'][1][1])
 
 	# X_train = read_train_files(read_ids(),True)
 	# counter = 0
