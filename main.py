@@ -129,7 +129,18 @@ def extract_bounding_box(id):
 
 	
 if __name__ == "__main__":
-	read_labels()
+	X_train = read_train_files(read_ids("filtered_words.txt"),False)
+	y_train = read_labels()
+
+	X_test = read_files("test")
+	X_val = read_files("val")
+
+	print(get_shape(X_train))
+	print(get_shape(X_val))
+	print(get_shape(X_test))
+
+	assert(get_shape(X_train)[0] == get_shape(y_train)[0])
+
 	# Get bounding box co ordinates
 	# count = 0
 	# top_left = []
@@ -141,7 +152,7 @@ if __name__ == "__main__":
 	# print(bounding_box['n02124075'][0][1], bounding_box['n02124075'][1][1])
 	# print(bounding_box['n07749582'][0][1], bounding_box['n07749582'][1][1])
 
-	# X_train = read_train_files(read_ids(),True)
+	
 	# counter = 0
 	# #TODO Can make this into a method and then use it in the loop above
 	# for images in X_train:
@@ -151,8 +162,7 @@ if __name__ == "__main__":
 	
 	# Get train data and display the first image from the first class
 	# X_train = read_train_files(read_ids(),True)
-	# X_test = read_files("test")
-	# X_val = read_files("val")
+
 
 	# X_train = np.array(list(map(preprocess_image, X_train)))
 	# X_test = np.array(list(map(preprocess_image, X_test)))
