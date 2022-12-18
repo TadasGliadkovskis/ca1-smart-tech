@@ -19,6 +19,15 @@ def read_ids(id_file_name):
 		ids.append(id.strip())
 	return ids
 
+def read_labels():
+	file_dir = env.IMAGES_DIR+"filtered_words.txt"
+	with open(file_dir) as f:
+		lines = f.readlines()
+	labels = []
+	for line in lines:
+		label = line.split('\t')[1]
+		labels.append(label.strip())
+	return labels
 
 def read_words_txt():
 	file_dir = env.IMAGES_DIR+"words.txt"
@@ -120,8 +129,7 @@ def extract_bounding_box(id):
 
 	
 if __name__ == "__main__":
-	filter_words_txt()
-	ids = read_ids("filtered_words.txt")
+	read_labels()
 	# Get bounding box co ordinates
 	# count = 0
 	# top_left = []
