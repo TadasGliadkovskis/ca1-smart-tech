@@ -108,10 +108,11 @@ def extract_bounding_box(id):
 	top_left_coords = []
 	bottom_right_coords = []
 	for line in lines:
-		split_list = line.split('\t')
+		split_list = line.split('\t') 						# {"n01443537_0.JPEG", "0",	"10", "63", "58"}
 		top_left_coords += [[split_list[1],split_list[2]]]
 		bottom_right_coords +=[[split_list[3],split_list[4].strip()]]
-	return top_left_coords, bottom_right_coords
+		bounding_box = [top_left_coords, bottom_right_coords]
+	return bounding_box
 
 	
 if __name__ == "__main__":
@@ -121,18 +122,21 @@ if __name__ == "__main__":
 	# Get bounding box co ordinates
 	count = 0
 	top_left = []
-	bottom_right = []
+	bounding_box = {}
+	#TODO this only retrieves the bounding box for the last class so when its used with display image
 	for id in ids:
-		top_left, bottom_right = extract_bounding_box(id)
-		break
+		bounding_box[id] = extract_bounding_box(id)
+		
+	print(bounding_box['n02124075'][0][1], bounding_box['n02124075'][1][1])
+	print(bounding_box['n07749582'][0][1], bounding_box['n07749582'][1][1])
 
-	X_train = read_train_files(read_ids(),True)
-	counter = 0
-	#TODO Can make this into a method and then use it in the loop above
-	for images in X_train:
-		for image in images:
-			display_image(image, top_left[counter], bottom_right[counter])			
-			counter += 1
+	# X_train = read_train_files(read_ids(),True)
+	# counter = 0
+	# #TODO Can make this into a method and then use it in the loop above
+	# for images in X_train:
+	# 	for image in images:
+	# 		display_image(image, top_left[counter], bottom_right[counter])			
+	# 		counter += 1
 	
 	# Get train data and display the first image from the first class
 	# X_train = read_train_files(read_ids(),True)
