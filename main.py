@@ -72,12 +72,19 @@ def read_files(folder):
 
 
 def read_train_files(ids, limit):
-	train = []
+	X_train = []
+	y_train = []
+	classID = 0
 	for id in ids:
-		train.append(read_files("/train/"+id))
+		fake_id = id[1:]
+		fake_id = int(fake_id)
+		for i in range(500):
+			y_train.append(classID)
+		classID += 1
+		X_train += (read_files("/train/"+id))
 		if limit:
 			break
-	return train
+	return X_train, y_train
 
 
 def grey_scale(image):
@@ -148,36 +155,33 @@ def modified_model():
 	model.add(Dense(500, activation='relu'))
 	model.add(Dropout(0.5))
 	model.add(Dense(num_classes, activation='softmax'))
-	model.compile(Adam(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
+	model.compile(Adam(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 	return model
 
 
 if __name__ == "__main__":
 	
-	y_train = read_labels()
-	y_train = np.asarray(y_train)
-	
-	X_train = read_train_files(read_ids("filtered_words.txt"),False)
+	y_train = []
+	X_train, y_train = read_train_files(read_ids("filtered_words.txt"),False)
+	X_train = np.array(list(map(preprocess_image,X_train)))
 
-	X_test = read_files("test")
-	X_val = read_files("val")
+	#X_test = read_files("test")
+	#X_val = read_files("val")
 
-	print(get_shape(X_train))
-	print(get_shape(X_val))
-	print(get_shape(X_test))
+	#print(get_shape(X_val))
+	#print(get_shape(X_test))
 
-	assert(get_shape(X_train)[0] == get_shape(y_train)[0])
+	#assert(get_shape(X_train)[0] == get_shape(y_train)[0])
 	model = modified_model()
 	#print(model.summary())
-	list = y_train[0].split(',')
-	print("LIST: ",list)
-	ids = read_ids("filtered_words.txt")
-	ids = np.asarray(ids)
+	#list = y_train[0].split(',')
+	#ids = read_ids("filtered_words.txt")
+	#ids = np.asarray(ids)
 	#ids = to_categorical(ids)
 	get_shape(y_train)
-	y_train.shape
-	#y_train = to_categorical(list)
-	history = model.fit(X_train, ids, validation_split=0.1, epochs=50, batch_size=200, verbose=1, shuffle=1)
+	y_train = to_categorical(y_train, 200)
+	get_shape(y_train)
+	history = model.fit(X_train, y_train, validation_split=0.1, epochs=1, batch_size=200, verbose=1, shuffle=1)
 	plt.plot(history.history['loss'])
 	plt.plot(history.history['val_loss'])
 	plt.legend(['loss', 'val_loss'])

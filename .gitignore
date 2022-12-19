@@ -131,3 +131,5 @@ dmypy.json
 
 #Custom
 /tiny-imagenet-200
+.idea
+test.py
