@@ -16,6 +16,7 @@ from keras.layers import Flatten
 from keras.layers import Dropout
 from keras.models import Model
 from keras.utils.np_utils import to_categorical
+import pandas
 
 def read_ids(id_file_name):
 	file_dir = env.IMAGES_DIR+id_file_name
@@ -33,8 +34,9 @@ def read_labels():
 		lines = f.readlines()
 	labels = []
 	for line in lines:
-		label = line.split('\t')[1]
-		labels.append(label.strip())
+		label = line.split('\t')[0]
+		for i in range(500):
+			labels.append(label.strip())
 	return labels
 
 def read_words_txt():
@@ -72,19 +74,12 @@ def read_files(folder):
 
 
 def read_train_files(ids, limit):
-	X_train = []
-	y_train = []
-	classID = 0
-	for id in ids:
-		fake_id = id[1:]
-		fake_id = int(fake_id)
-		for i in range(500):
-			y_train.append(classID)
-		classID += 1
-		X_train += (read_files("/train/"+id))
-		if limit:
-			break
-	return X_train, y_train
+    train = []
+    for id in ids:
+        train += (read_files("/train/"+id))
+        if limit:
+            break
+    return train
 
 
 def grey_scale(image):
@@ -145,14 +140,14 @@ def extract_bounding_box(id):
 def modified_model():
 	num_classes = 200
 	model = Sequential()
-	model.add(Conv2D(60, (5, 5), input_shape=(64, 64, 1), activation='relu'))
+	model.add(Conv2D(60, (5, 5), input_shape=(64, 64, 1), activation='elu'))
 	model.add(Conv2D(60, (5, 5), activation='relu'))
 	model.add(MaxPooling2D(pool_size=(2, 2)))
-	model.add(Conv2D(30, (3, 3), activation='relu'))
+	model.add(Conv2D(30, (3, 3), activation='elu'))
 	model.add(Conv2D(30, (3, 3), activation='relu'))
 	model.add(MaxPooling2D(pool_size=(2, 2)))
 	model.add(Flatten())
-	model.add(Dense(500, activation='relu'))
+	model.add(Dense(500, activation='elu'))
 	model.add(Dropout(0.5))
 	model.add(Dense(num_classes, activation='softmax'))
 	model.compile(Adam(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
@@ -161,33 +156,52 @@ def modified_model():
 
 if __name__ == "__main__":
 	
-	y_train = []
-	X_train, y_train = read_train_files(read_ids("filtered_words.txt"),False)
-	X_train = np.array(list(map(preprocess_image,X_train)))
+	X_train = read_train_files(read_ids("filtered_words.txt"),False)
+	get_shape(X_train)
+	X_train = np.array(list(map(preprocess_image, X_train)))
 
-	#X_test = read_files("test")
-	#X_val = read_files("val")
+	X_train = X_train.reshape(100000, 64, 64, 1)
 
-	#print(get_shape(X_val))
-	#print(get_shape(X_test))
+	print(X_train.shape)
 
-	#assert(get_shape(X_train)[0] == get_shape(y_train)[0])
+	y_train = read_labels()
+	y_train= np.array(y_train)
+	print(y_train)
+	y_train = pandas.get_dummies(y_train)
+
+	print(y_train.shape)
+	# label_encoder = LabelEncoder()
+	# y_train = label_encoder.fit_transform(y_train)
+	# y_train = to_categorical(y_train)
+
+	
+	
+	X_test = read_files("test")
+	X_val = read_files("val")
+
+	
+	# X_test = np.array(list(map(preprocess_image, X_test)))
+	# X_val = np.array(list(map(preprocess_image, X_val)))
+
 	model = modified_model()
 	#print(model.summary())
-	#list = y_train[0].split(',')
-	#ids = read_ids("filtered_words.txt")
-	#ids = np.asarray(ids)
-	#ids = to_categorical(ids)
-	get_shape(y_train)
-	y_train = to_categorical(y_train, 200)
-	get_shape(y_train)
-	history = model.fit(X_train, y_train, validation_split=0.1, epochs=1, batch_size=200, verbose=1, shuffle=1)
-	plt.plot(history.history['loss'])
-	plt.plot(history.history['val_loss'])
-	plt.legend(['loss', 'val_loss'])
-	plt.title('Loss')
-	plt.xlabel('epochs')
+
+	# Train the model and evaluate its performance
+	h = model.fit(X_train, y_train, batch_size=200, epochs=50, validation_split=0.2,  verbose=1, shuffle=1)
+	plt.plot(h.history['accuracy'])
+	plt.plot(h.history['val_accuracy'])
+	plt.title('Accuracy')
+	plt.xlabel('epoch')
 	plt.show()
+
+	url=env.IMAGES_DIR+"/tiny-imagenet-200/test/images/test_0.JPEG"
+	img = cv2.imread(url)
+	img = np.asarray(img)
+	img = cv2.resize(img, (32, 32))
+	img = preprocess_image(img)
+	img = img.reshape(1, 32, 32, 1)
+	print("Predicted sign: " + str(np.argmax(model.predict(img), axis=1)))
+
 
 
 	# Get bounding box co ordinates
@@ -213,9 +227,7 @@ if __name__ == "__main__":
 	# X_train = read_train_files(read_ids(),True)
 
 
-	# X_train = np.array(list(map(preprocess_image, X_train)))
-	# X_test = np.array(list(map(preprocess_image, X_test)))
-	# X_val = np.array(list(map(preprocess_image, X_val)))
+
 	# img = X_train[0][0]
 	# print(len(X_train))
 	
