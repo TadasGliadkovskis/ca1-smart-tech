@@ -194,6 +194,8 @@ if __name__ == "__main__":
 	plt.xlabel('epoch')
 	plt.show()
 
+	model.save('./')
+
 	url=env.IMAGES_DIR+"/tiny-imagenet-200/test/images/test_0.JPEG"
 	img = cv2.imread(url)
 	img = np.asarray(img)
