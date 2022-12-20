@@ -17,6 +17,7 @@ from keras.layers import Dropout
 from keras.models import Model
 from keras.utils.np_utils import to_categorical
 import pandas
+import random
 
 def read_ids(id_file_name):
 	file_dir = env.IMAGES_DIR+id_file_name
@@ -106,13 +107,18 @@ def preprocess_image(image):
 
 	
 def display_image(img, top_left_coords, bottom_right_coords):
-	img = preprocess_image(img)
 	img = img * 255
 	img = img.astype(np.uint8)
 	img_rect = cv2.rectangle(img, (int(top_left_coords[0]),int(top_left_coords[1])), (int(bottom_right_coords[0]),int(bottom_right_coords[1])), (255,0,0), 0)
 	plt.imshow(img_rect, cmap='gray')
 	plt.show()
 
+
+def display_random_images(X_train, amount):
+	for i in range(amount):
+		rand = random.randint(0, 100001)
+		plt.imshow(X_train[rand], cmap = plt.get_cmap('gray'))			
+		plt.show()
 
 
 # Will allow us to see how many classes (200), how many images in each class (500), (X, Y) resolution (64, 64), RGB status (3)
@@ -155,13 +161,18 @@ def modified_model():
 
 
 if __name__ == "__main__":
-	
-	X_train = read_train_files(read_ids("filtered_words.txt"),False)
+	filter_words_txt()
+	ids = read_ids("filtered_words.txt")
+	X_train = read_train_files(ids,False)
+	X_test = read_files("test")
+	X_val = read_files("val")
+	print("Before Preprocess shape")
 	get_shape(X_train)
 	X_train = np.array(list(map(preprocess_image, X_train)))
 
 	X_train = X_train.reshape(100000, 64, 64, 1)
 
+	print("After Preprocess shape")
 	print(X_train.shape)
 
 	y_train = read_labels()
@@ -169,6 +180,7 @@ if __name__ == "__main__":
 	print(y_train)
 	y_train = pandas.get_dummies(y_train)
 
+	print("Y train shape")
 	print(y_train.shape)
 	# label_encoder = LabelEncoder()
 	# y_train = label_encoder.fit_transform(y_train)
@@ -176,9 +188,17 @@ if __name__ == "__main__":
 
 	
 	
-	X_test = read_files("test")
-	X_val = read_files("val")
 
+	TOP_LEFT_COORDS = 0
+	BOTTOM_RIGHT_COORDS = 1
+	bounding_box = {}
+	
+	for id in ids:
+		bounding_box[id] = extract_bounding_box(id)
+
+	#shows an image the boundary box
+	display_image(X_train[500], bounding_box['n01629819'][TOP_LEFT_COORDS][0], bounding_box['n01629819'][BOTTOM_RIGHT_COORDS][0])			
+	display_random_images(X_train, 3)
 	
 	# X_test = np.array(list(map(preprocess_image, X_test)))
 	# X_val = np.array(list(map(preprocess_image, X_val)))
@@ -186,6 +206,7 @@ if __name__ == "__main__":
 	model = modified_model()
 	#print(model.summary())
 
+	
 	# Train the model and evaluate its performance
 	h = model.fit(X_train, y_train, batch_size=200, epochs=50, validation_split=0.2,  verbose=1, shuffle=1)
 	plt.plot(h.history['accuracy'])
@@ -194,13 +215,16 @@ if __name__ == "__main__":
 	plt.xlabel('epoch')
 	plt.show()
 
-	url=env.IMAGES_DIR+"/tiny-imagenet-200/test/images/test_0.JPEG"
-	img = cv2.imread(url)
-	img = np.asarray(img)
-	img = cv2.resize(img, (32, 32))
-	img = preprocess_image(img)
-	img = img.reshape(1, 32, 32, 1)
-	print("Predicted sign: " + str(np.argmax(model.predict(img), axis=1)))
+	model.save(env.IMAGES_DIR+"../model.h5")
+
+	# DOES NOT WORK 
+	# url=env.IMAGES_DIR+"/tiny-imagenet-200/test/images/test_0.JPEG"
+	# img = cv2.imread(url)
+	# img = np.asarray(img)
+	# img = cv2.resize(img, (32, 32))
+	# img = preprocess_image(img)
+	# img = img.reshape(1, 32, 32, 1)
+	# print("Predicted sign: " + str(np.argmax(model.predict(img), axis=1)))
 
 
 
