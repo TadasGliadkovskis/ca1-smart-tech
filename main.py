@@ -180,7 +180,7 @@ if __name__ == "__main__":
 	filter_words_txt()
 	print("Reading ID's")
 	ids = read_ids("filtered_words.txt")
-	print("Fetching train, test and val data")
+	print("Fetching train, test and val data This will take a while if the operation is run for the first time")
 	X_train = read_train_files(ids,False)
 	X_test = read_files("test")
 	X_val = read_files("val")
