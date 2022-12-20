@@ -1,21 +1,15 @@
 # Smart Technologies CA1 Image Classification
+Built using tensorflow and conda ```https://www.tensorflow.org/install/pip#windows-native_1``` (guide to setup)
+
 ## Richard Collins (D00230925), Tadas Gliadkovskis (D00229061)
 
 ## How to read annotations in the .txt
 TR = Top Right Coordinate
 BR = Bottom Right Coordinate
 FileName, Class, TR X, TR Y, BR X, BR Y
-## Key Features
--
--
-
-## Dependencies while developing
-If new dependencies have been added make sure to create a requirments.txt file using
-```pip freeze requirements.txt```
 
 ## How to use
-To run this application you'll need [Python >= 3.10.7](https://www.python.org/downloads/) and [pip](https://pypi.org/) (which comes pre-installed with python)
-From your command line
+Need to create a ```env.py``` and insert the path to the images folder ```IMAGES_DIR = "PATH" ```
 
 ```
 # Clone This Repository
@@ -24,18 +18,6 @@ https://github.com/TadasGliadkovskis/ca1-smart-tech.git
 # Go into the repository
 cd ca1-smart-tech
 
-# Create your virtual env
-py -m venv env
-
-# Activate your virtual env
-env\Scripts\activate
-
-# Install Dependencies
-pip install -r requirements.txt
-
 # Run the app
-py main.py
-
-# Deactivate your virtual env when finished
-env\Scripts\deactivate
+python main.py
 ```
