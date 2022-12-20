@@ -225,33 +225,3 @@ if __name__ == "__main__":
 	# img = preprocess_image(img)
 	# img = img.reshape(1, 32, 32, 1)
 	# print("Predicted sign: " + str(np.argmax(model.predict(img), axis=1)))
-
-
-
-	# Get bounding box co ordinates
-	# count = 0
-	# top_left = []
-	# bounding_box = {}
-	# #TODO this only retrieves the bounding box for the last class so when its used with display image
-	# for id in ids:
-	# 	bounding_box[id] = extract_bounding_box(id)
-		
-	# print(bounding_box['n02124075'][0][1], bounding_box['n02124075'][1][1])
-	# print(bounding_box['n07749582'][0][1], bounding_box['n07749582'][1][1])
-
-	
-	# counter = 0
-	# #TODO Can make this into a method and then use it in the loop above
-	# for images in X_train:
-	# 	for image in images:
-	# 		display_image(image, top_left[counter], bottom_right[counter])			
-	# 		counter += 1
-	
-	# Get train data and display the first image from the first class
-	# X_train = read_train_files(read_ids(),True)
-
-
-
-	# img = X_train[0][0]
-	# print(len(X_train))
-	
