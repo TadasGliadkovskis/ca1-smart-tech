@@ -18,6 +18,9 @@ from keras.models import Model
 from keras.utils.np_utils import to_categorical
 import pandas
 import random
+import requests
+from io import BytesIO
+import zipfile
 
 def read_ids(id_file_name):
 	file_dir = env.IMAGES_DIR+id_file_name
@@ -75,12 +78,12 @@ def read_files(folder):
 
 
 def read_train_files(ids, limit):
-    train = []
-    for id in ids:
-        train += (read_files("/train/"+id))
-        if limit:
-            break
-    return train
+	train = []
+	for id in ids:
+		train += (read_files("/train/"+id))
+		if limit:
+			break
+	return train
 
 
 def grey_scale(image):
@@ -160,9 +163,24 @@ def modified_model():
 	return model
 
 
+def download_images():
+	if (os.path.isdir(env.IMAGES_DIR)):
+		print ('Images already downloaded...')
+		return
+	url="http://cs231n.stanford.edu/tiny-imagenet-200.zip"
+	r = requests.get(url, stream=True)
+	print ('Downloading |' + url )
+	zip_ref = zipfile.ZipFile(BytesIO(r.content))
+	zip_ref.extractall('./')
+	zip_ref.close()
+
 if __name__ == "__main__":
+	
+	download_images()
 	filter_words_txt()
+	print("Reading ID's")
 	ids = read_ids("filtered_words.txt")
+	print("Fetching train, test and val data")
 	X_train = read_train_files(ids,False)
 	X_test = read_files("test")
 	X_val = read_files("val")
